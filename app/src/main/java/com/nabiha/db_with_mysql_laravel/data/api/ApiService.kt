@@ -18,7 +18,7 @@ import retrofit2.http.Query
 
 interface ApiService {
     @GET("/api/getData")
-    suspend fun getPosts(): Response<ArrayList<ListModel>>
+    suspend fun getPosts(): Response<List<ListModel>>
 
     @GET("/api/get-csrf-token")
     suspend fun getCSRFToken(): Response<TokenModel>

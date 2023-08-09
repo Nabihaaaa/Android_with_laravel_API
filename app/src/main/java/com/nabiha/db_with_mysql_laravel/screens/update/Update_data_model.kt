@@ -30,7 +30,7 @@ class Update_data_model(private val id: String) : ViewModel() {
 
             if (response.isSuccessful) {
                 val listModelList = response.body()
-                data.value = listModelList?.get(id.toInt()-1) ?: ListModel()
+                data.value = listModelList?.find { it.id == id.toInt() } ?: ListModel()
                 Log.d("ISIRESPONSE", "onResponse: ${response.code()}")
             } else {
                 Log.d(

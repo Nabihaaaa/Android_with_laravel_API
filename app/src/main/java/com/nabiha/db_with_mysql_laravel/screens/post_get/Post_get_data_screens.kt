@@ -96,9 +96,6 @@ fun Post_get_data_screens(
                             style = MaterialTheme.typography.titleLarge
                         )
                         data.forEach {
-
-                            Log.d("ISI DATA", "Post_get_data_screens: ${it.id}")
-
                             Row(
                                 modifier = Modifier.padding(vertical = 8.dp),
                                 verticalAlignment = Alignment.CenterVertically
