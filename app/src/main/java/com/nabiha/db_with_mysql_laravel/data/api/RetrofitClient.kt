@@ -3,31 +3,26 @@ package com.nabiha.db_with_mysql_laravel.data.api
 import android.util.Log
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
 import okhttp3.Request
+import okhttp3.internal.Util
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
 
     private var csrfToken: String = ""
 
     private val httpClient = OkHttpClient.Builder()
-        .addInterceptor { chain ->
-            val original = chain.request()
-            val requestBuilder = original.newBuilder()
-                .header("X-CSRF-TOKEN", csrfToken)
-                .method(original.method(), original.body())
-
-            // Log request headers
-            Log.d("REQUEST_HEADERS", requestBuilder.build().headers().toString())
-
-            chain.proceed(requestBuilder.build())
-        }
+        .retryOnConnectionFailure(true)
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .protocols(Util.immutableList(Protocol.HTTP_1_1))
         .build()
 
     val instance: ApiService by lazy {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://androidlaraveltest.000webhostapp.com/")
+            .baseUrl("http://projectnabiha.my.id/")
             .client(httpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

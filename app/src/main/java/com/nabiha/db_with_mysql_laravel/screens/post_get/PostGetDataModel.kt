@@ -1,25 +1,40 @@
-package com.nabiha.db_with_mysql_laravel.screens
+package com.nabiha.db_with_mysql_laravel.screens.post_get
 
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nabiha.db_with_mysql_laravel.data.api.RetrofitClient
 import com.nabiha.db_with_mysql_laravel.data.model.ListModel
-import com.nabiha.db_with_mysql_laravel.data.model.TokenModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.log
 
-class Post_get_data_model : ViewModel() {
+class PostGetDataModel : ViewModel() {
+
 
     val data = mutableStateListOf<ListModel>()
+    var refreshing by mutableStateOf(false)
 
     init {
         viewModelScope.launch {
             getData()
+        }
+    }
+    suspend fun refreshData() {
+        try {
+            refreshing = true
+            delay(1_000L)
+            data.clear()
+            getData()
+        } catch (e: Exception) {
+            Log.d("ERR", "refreshData: $e")
+        } finally {
+            refreshing = false
         }
     }
 
@@ -45,13 +60,24 @@ class Post_get_data_model : ViewModel() {
 
     suspend fun addData(name: String, context: Context) {
         try {
-            val data = HashMap<String, String>()
-            data["name"] = name
-
-            val response = RetrofitClient.instance.addData(data)
+            val response = RetrofitClient.instance.addData(ListModel(name = name))
 
             if (response.isSuccessful) {
                 Toast.makeText(context, "Data berhasil diupload", Toast.LENGTH_LONG).show()
+            } else {
+                Log.d("GAGAL", "addData: $response")
+            }
+        } catch (e: Exception) {
+            Log.d("ERR", "addData: $e")
+        }
+    }
+
+    suspend fun deleteData(id: Int, context: Context) {
+        try {
+            val response = RetrofitClient.instance.deleteData(id)
+
+            if (response.isSuccessful) {
+                Toast.makeText(context, "Data berhasil dihapus", Toast.LENGTH_LONG).show()
             } else {
                 Log.d("GAGAL", "addData: $response")
             }
